@@ -7,8 +7,8 @@ class CadastrarUsuarioRequest {
   final String senha;
   final String ativo;
   final String administrador;
-  final String necessidadeEspecial;
-  final int codigoPerfil;
+  final String possuinecessidadesespecial;
+  final int codigoperfilacesso;
   final String email;
 
   const CadastrarUsuarioRequest({
@@ -18,8 +18,8 @@ class CadastrarUsuarioRequest {
     required this.senha,
     required this.ativo,
     required this.administrador,
-    required this.necessidadeEspecial,
-    required this.codigoPerfil,
+    required this.possuinecessidadesespecial,
+    required this.codigoperfilacesso,
     required this.email,
   });
 
@@ -31,8 +31,8 @@ class CadastrarUsuarioRequest {
       'senha': senha,
       'ativo': ativo,
       'administrador': administrador,
-      'necessidadeEspecial': necessidadeEspecial,
-      'codigoPerfil': codigoPerfil,
+      'possuinecessidadesespecial': possuinecessidadesespecial,
+      'codigoperfilacesso': codigoperfilacesso,
       'email': email,
     };
   }
@@ -45,8 +45,8 @@ class CadastrarUsuarioRequest {
       senha: map['senha'] as String,
       ativo: map['ativo'] as String,
       administrador: map['administrador'] as String,
-      necessidadeEspecial: map['necessidadeEspecial'] as String,
-      codigoPerfil: map['codigoPerfil'] as int,
+      possuinecessidadesespecial: map['possuinecessidadesespecial'] as String,
+      codigoperfilacesso: map['codigoperfilacesso'] as int,
       email: map['email'] as String,
     );
   }

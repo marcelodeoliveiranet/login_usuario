@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:login_usuario/controllers/usuario_controller.dart';
 import 'package:login_usuario/dto/request/cadastrar_usuario_request.dart';
 import 'package:login_usuario/model/perfil_acesso.dart';
-import 'package:login_usuario/model/usuario.dart';
-import 'package:login_usuario/services/usuario_service.dart';
 import 'package:login_usuario/states/base_state.dart';
 
 class FormularioUsuarioWidget extends StatefulWidget {
@@ -49,8 +47,8 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
       senha: senha,
       ativo: (ativo ? "S" : "N"),
       administrador: (administrador ? "S" : "N"),
-      necessidadeEspecial: (possuiNecessidadeEspeciais ? "S" : "N"),
-      codigoPerfil: perfilSelecionado!.codigo,
+      possuinecessidadesespecial: (possuiNecessidadeEspeciais ? "S" : "N"),
+      codigoperfilacesso: perfilSelecionado!.codigo,
       email: email,
     );
 
@@ -221,13 +219,6 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
                           },
                         ),
                       ),
-                      /*IconButton(
-                        onPressed: () {
-                          perfilSelecionado = null;
-                          setState(() {});
-                        },
-                        icon: Icon(Icons.clear),
-                      ),*/
                     ],
                   ),
                   TextFormField(
@@ -262,6 +253,12 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
                               );
                             }
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            minimumSize: Size(200, 50),
+                          ),
+
                           child: const Text("Gravar"),
                         ),
                       ),
