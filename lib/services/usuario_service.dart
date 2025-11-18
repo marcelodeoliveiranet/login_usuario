@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:login_usuario/dto/request/cadastrar_usuario_request.dart';
 import 'package:login_usuario/model/usuario.dart';
 import 'package:http/http.dart' as http;
@@ -31,7 +32,7 @@ class UsuarioService {
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
     } else {
-      print("Erro:  ${response.statusCode} - ${response.body}");
+      debugPrint("Erro:  ${response.statusCode} - ${response.body}");
     }
   }
 }

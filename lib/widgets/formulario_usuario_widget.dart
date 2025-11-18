@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:login_usuario/controllers/usuario_controller.dart';
 import 'package:login_usuario/dto/request/cadastrar_usuario_request.dart';
 import 'package:login_usuario/model/perfil_acesso.dart';
+import 'package:login_usuario/model/usuario.dart';
 import 'package:login_usuario/services/usuario_service.dart';
+import 'package:login_usuario/states/base_state.dart';
 
 class FormularioUsuarioWidget extends StatefulWidget {
   const FormularioUsuarioWidget({super.key});
@@ -17,7 +19,6 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
   final senhaController = TextEditingController();
   final emailController = TextEditingController();
   UsuarioController usuarioController = UsuarioController();
-  UsuarioService usuarioService = UsuarioService();
   bool ativo = false;
   bool administrador = false;
   bool possuiNecessidadeEspeciais = false;
@@ -29,9 +30,10 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
   void initState() {
     super.initState();
     usuarioController.buscarPerfilAcesso();
+    usuarioController.salvarUsuarioState.addListener(onSalvarUsuario);
   }
 
-  Future<void> validarFormulario(
+  void validarFormulario(
     String nome,
     String senha,
     bool ativo,
@@ -40,7 +42,7 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
     int codigoPerfilAcesso,
     String email,
   ) async {
-    CadastrarUsuarioRequest cadastrarUsuario = CadastrarUsuarioRequest(
+    CadastrarUsuarioRequest usuarioDto = CadastrarUsuarioRequest(
       codigo: 0,
       foto: "",
       nome: nome,
@@ -52,39 +54,63 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
       email: email,
     );
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(content: Center(child: CircularProgressIndicator()));
-      },
-    );
+    usuarioController.salvarUsuario(usuarioDto);
+  }
 
-    try {
-      await usuarioService.saveUser(cadastrarUsuario);
+  void onSalvarUsuario() {
+    final value = usuarioController.salvarUsuarioState.value;
 
-      nomeController.clear();
-      senhaController.clear();
-      emailController.clear();
-      perfilSelecionado = null;
-      ativo = false;
-      administrador = false;
-      possuiNecessidadeEspeciais = false;
-      setState(() {});
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("Usuário cadastrado com sucesso"),
-          backgroundColor: Colors.green,
-        ),
+    if (value is ErrorState) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: IntrinsicHeight(
+              child: Column(
+                spacing: 16,
+                children: [
+                  Icon(Icons.error, color: Colors.red, size: 45),
+                  Text(value.erro, style: TextStyle(fontSize: 24)),
+                ],
+              ),
+            ),
+          );
+        },
       );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+    } else if (value is LoadingState) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: IntrinsicHeight(
+              child: Column(
+                spacing: 16,
+                children: [CircularProgressIndicator()],
+              ),
+            ),
+          );
+        },
       );
-    } finally {
+    } else {
       Navigator.of(context).pop();
+      if (value is SuccessState) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(value.sucesso), backgroundColor: Colors.green),
+        );
+        limparFormulario();
+      }
     }
+  }
+
+  void limparFormulario() {
+    nomeController.clear();
+    senhaController.clear();
+    emailController.clear();
+    perfilSelecionado = null;
+    ativo = false;
+    administrador = false;
+    possuiNecessidadeEspeciais = false;
+    setState(() {});
   }
 
   @override
@@ -134,7 +160,6 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
                   ),
 
                   CheckboxListTile(
-                    key: GlobalKey(),
                     title: const Text("Ativo?"),
                     value: ativo,
                     onChanged: (bool? valor) {
@@ -145,7 +170,6 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
                   ),
 
                   CheckboxListTile(
-                    key: GlobalKey(),
                     title: const Text("Será um administrador? "),
                     value: administrador,
                     onChanged: (bool? valor) {
@@ -155,7 +179,6 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
                     },
                   ),
                   CheckboxListTile(
-                    key: GlobalKey(),
                     title: const Text("Possui necessidade especiais?"),
                     value: possuiNecessidadeEspeciais,
                     onChanged: (bool? valor) {
@@ -198,15 +221,13 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
                           },
                         ),
                       ),
-                      Expanded(
-                        child: IconButton(
-                          onPressed: () {
-                            perfilSelecionado = null;
-                            setState(() {});
-                          },
-                          icon: Icon(Icons.clear),
-                        ),
-                      ),
+                      /*IconButton(
+                        onPressed: () {
+                          perfilSelecionado = null;
+                          setState(() {});
+                        },
+                        icon: Icon(Icons.clear),
+                      ),*/
                     ],
                   ),
                   TextFormField(
@@ -222,7 +243,7 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () async {
+                          onPressed: () {
                             final validation = formKey.currentState?.validate();
 
                             if (validation == true) {
@@ -260,6 +281,7 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
     nomeController.dispose();
     senhaController.dispose();
     emailController.dispose();
+    usuarioController.removeListener(onSalvarUsuario);
     super.dispose();
   }
 }
