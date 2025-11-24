@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
+
 import 'package:login_usuario/services/usuario_service.dart';
 import 'package:login_usuario/widgets/formulario_usuario_widget.dart';
 import 'package:login_usuario/widgets/usuario_cadastrado_widget.dart';
@@ -33,7 +34,10 @@ class _ObtenhaUsuariosCadastradosWidgetState
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          FormularioUsuarioWidget();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FormularioUsuarioWidget()),
+          );
         },
         backgroundColor: Colors.blue,
         child: Icon(Icons.add),

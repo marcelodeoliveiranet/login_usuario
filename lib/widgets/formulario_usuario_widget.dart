@@ -114,7 +114,10 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Cadastro de Usuarios")),
+      appBar: AppBar(
+        title: const Text("Cadastro de Usuarios"),
+        backgroundColor: Colors.blue,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListenableBuilder(
