@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:login_usuario/dto/request/cadastrar_usuario_request.dart';
 import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
 import 'package:login_usuario/model/usuario.dart';
@@ -12,11 +11,11 @@ class UsuarioService {
     ),
   );
 
-  Future<List<Usuario>> getUserActive() async {
+  Future<List<Usuario>> obtenhaUsuariosAtivos() async {
     final response = await _dio.get("obtenhausuariosativos");
 
     if (response.statusCode == 200) {
-      final List<dynamic> jsonData = jsonDecode(response.data)['Resultado'];
+      final List<dynamic> jsonData = response.data['Resultado'];
       return jsonData.map((item) => Usuario.fromJson(item)).toList();
     } else {
       throw Exception("Erro ao buscar usuarios ativos");

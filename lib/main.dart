@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login_usuario/widgets/obtenha_usuarios_cadastrados_widget.dart';
+import 'package:login_usuario/widgets/formulario_login_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: ObtenhaUsuariosCadastradosWidget(), // FormularioUsuarioWidget(),
+      home: FormularioLoginWidget(),
     );
   }
 }
