@@ -34,6 +34,7 @@ class _FormularioLoginWidgetState extends State<FormularioLoginWidget> {
             return Form(
               key: formKey,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 spacing: 16,
                 children: [
                   Row(
