@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:login_usuario/dto/request/cadastrar_usuario_request.dart';
+import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
 import 'package:login_usuario/model/perfil_acesso.dart';
 import 'package:login_usuario/model/usuario.dart';
 import 'package:login_usuario/services/perfil_acesso_service.dart';
 import 'package:login_usuario/services/usuario_service.dart';
 import 'package:login_usuario/states/base_state.dart';
+import 'package:login_usuario/views/usuarios_cadastrados/obtenha_usuarios_cadastrados_widget.dart';
 
 class UsuarioController extends ChangeNotifier {
   List<PerfilAcesso> perfisAcesso = [];
@@ -14,6 +16,22 @@ class UsuarioController extends ChangeNotifier {
   ValueNotifier<BaseState> perfilAcessoState = ValueNotifier(IdleState());
   ValueNotifier<BaseState> salvarUsuarioState = ValueNotifier(IdleState());
   ValueNotifier<BaseState> usuarioState = ValueNotifier(IdleState());
+
+  Future<void> excluirUsuario(
+    Obtenhausuarioscadastrados usuarioCadastrado,
+  ) async {
+    usuarioState.value = LoadingState();
+
+    try {
+      await usuarioService.excluirUsuario(usuarioCadastrado);
+
+      usuarioState.value = SuccessState(sucesso: "Usuário excluido");
+    } catch (e) {
+      usuarioState.value = ErrorState(erro: e.toString());
+    } finally {
+      notifyListeners();
+    }
+  }
 
   Future<void> buscarPerfilAcesso() async {
     perfilAcessoState.value = LoadingState();

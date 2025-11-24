@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login_usuario/controllers/usuario_controller.dart';
 import 'package:login_usuario/model/usuario.dart';
-import 'package:login_usuario/widgets/obtenha_usuarios_cadastrados_widget.dart';
+import 'package:login_usuario/views/usuarios_cadastrados/obtenha_usuarios_cadastrados_widget.dart';
 
 class FormularioLoginWidget extends StatefulWidget {
   const FormularioLoginWidget({super.key});
@@ -94,13 +94,14 @@ class _FormularioLoginWidgetState extends State<FormularioLoginWidget> {
                             final validation = formKey.currentState?.validate();
 
                             if (validation == true) {
-                              Navigator.pushReplacement(
+                              Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
                                   builder:
                                       (context) =>
                                           ObtenhaUsuariosCadastradosWidget(),
                                 ),
+                                (route) => false,
                               );
                             }
                           },

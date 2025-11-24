@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:login_usuario/controllers/usuario_controller.dart';
 import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
 
 import 'package:login_usuario/services/usuario_service.dart';
-import 'package:login_usuario/widgets/formulario_usuario_widget.dart';
-import 'package:login_usuario/widgets/usuario_cadastrado_widget.dart';
+import 'package:login_usuario/views/formulario_usuario/formulario_usuario_widget.dart';
+import 'package:login_usuario/views/usuarios_cadastrados/usuario_cadastrado_widget.dart';
 
 class ObtenhaUsuariosCadastradosWidget extends StatefulWidget {
   const ObtenhaUsuariosCadastradosWidget({super.key});
@@ -68,7 +69,10 @@ class _ObtenhaUsuariosCadastradosWidgetState
                         itemBuilder: (context, index) {
                           Obtenhausuarioscadastrados usuario =
                               usuariosCadastrados[index];
-                          return UsuarioCadastradoWidget(usuario: usuario);
+                          return UsuarioCadastradoWidget(
+                            usuario: usuario,
+                            usuarioController: UsuarioController(),
+                          );
                         },
                       );
                     }

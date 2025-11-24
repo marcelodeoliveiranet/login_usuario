@@ -22,6 +22,16 @@ class UsuarioService {
     }
   }
 
+  Future<void> excluirUsuario(
+    Obtenhausuarioscadastrados usuarioCadastrado,
+  ) async {
+    try {
+      await _dio.delete("ExcluaUsuario/${usuarioCadastrado.codigo}");
+    } catch (e) {
+      throw Exception("Erro ao excluir usuário: ${e.toString()}");
+    }
+  }
+
   Future<List<Obtenhausuarioscadastrados>> obtenhaUsuariosCadastrados() async {
     final response = await _dio.post(
       "obtenhausuarioscadastrados",

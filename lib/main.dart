@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login_usuario/widgets/formulario_login_widget.dart';
+import 'package:login_usuario/views/login/formulario_login_widget.dart';
 
 void main() {
   runApp(const MyApp());
