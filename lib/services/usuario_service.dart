@@ -22,17 +22,18 @@ class UsuarioService {
     }
   }
 
-  Future<void> excluirUsuario(
-    Obtenhausuarioscadastrados usuarioCadastrado,
-  ) async {
+  Future<void> excluirUsuario(UsuarioCadastrado usuarioCadastrado) async {
     try {
       await _dio.delete("ExcluaUsuario/${usuarioCadastrado.codigo}");
-    } catch (e) {
-      throw Exception("Erro ao excluir usuário: ${e.toString()}");
+    } on DioException catch (e) {
+      if (e.response!.statusCode == 400) {
+        List<dynamic> json = e.response?.data["Resultado"];
+        throw Exception(json[0]["Message"]);
+      }
     }
   }
 
-  Future<List<Obtenhausuarioscadastrados>> obtenhaUsuariosCadastrados() async {
+  Future<List<UsuarioCadastrado>> obtenhaUsuariosCadastrados() async {
     final response = await _dio.post(
       "obtenhausuarioscadastrados",
       data: {"procurarpor": ""},
@@ -40,9 +41,7 @@ class UsuarioService {
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = response.data["Resultado"];
-      return jsonData
-          .map((item) => Obtenhausuarioscadastrados.fromJson(item))
-          .toList();
+      return jsonData.map((item) => UsuarioCadastrado.fromJson(item)).toList();
     } else {
       throw Exception("Erro ao buscar usuarios cadastrados");
     }

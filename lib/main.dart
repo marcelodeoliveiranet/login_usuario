@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:login_usuario/dependencies/injetor.dart';
 import 'package:login_usuario/views/login/formulario_login_widget.dart';
 
 void main() {
+  setupInjector();
   runApp(const MyApp());
 }
 

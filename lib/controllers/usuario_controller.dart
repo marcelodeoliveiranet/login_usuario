@@ -6,26 +6,36 @@ import 'package:login_usuario/model/usuario.dart';
 import 'package:login_usuario/services/perfil_acesso_service.dart';
 import 'package:login_usuario/services/usuario_service.dart';
 import 'package:login_usuario/states/base_state.dart';
-import 'package:login_usuario/views/usuarios_cadastrados/obtenha_usuarios_cadastrados_widget.dart';
 
 class UsuarioController extends ChangeNotifier {
   List<PerfilAcesso> perfisAcesso = [];
   List<Usuario> usuariosAtivos = [];
+  List<UsuarioCadastrado> usuariosCadastrados = [];
   PerfilAcessoService perfilAcessoService = PerfilAcessoService();
   UsuarioService usuarioService = UsuarioService();
   ValueNotifier<BaseState> perfilAcessoState = ValueNotifier(IdleState());
   ValueNotifier<BaseState> salvarUsuarioState = ValueNotifier(IdleState());
   ValueNotifier<BaseState> usuarioState = ValueNotifier(IdleState());
 
-  Future<void> excluirUsuario(
-    Obtenhausuarioscadastrados usuarioCadastrado,
-  ) async {
+  Future<void> obterUsuariosCadastrados() async {
+    try {
+      usuariosCadastrados = await usuarioService.obtenhaUsuariosCadastrados();
+    } catch (e) {
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> excluirUsuario(UsuarioCadastrado usuarioCadastrado) async {
     usuarioState.value = LoadingState();
 
     try {
       await usuarioService.excluirUsuario(usuarioCadastrado);
 
-      usuarioState.value = SuccessState(sucesso: "Usuário excluido");
+      usuarioState.value = SuccessState(
+        sucesso: "Usuário excluido com sucesso",
+      );
+      usuariosCadastrados.remove(usuarioCadastrado);
     } catch (e) {
       usuarioState.value = ErrorState(erro: e.toString());
     } finally {
@@ -66,10 +76,10 @@ class UsuarioController extends ChangeNotifier {
 
     try {
       await usuarioService.saveUser(usuarioDto);
-      await Future.delayed(Duration(seconds: 1));
       salvarUsuarioState.value = SuccessState(
         sucesso: "Usuario gravado com sucesso",
       );
+      obterUsuariosCadastrados();
     } catch (e) {
       salvarUsuarioState.value = ErrorState(erro: e.toString());
     } finally {

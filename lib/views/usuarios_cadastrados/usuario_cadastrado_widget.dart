@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:login_usuario/controllers/usuario_controller.dart';
 import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
+import 'package:login_usuario/states/base_state.dart';
+import 'package:login_usuario/views/formulario_usuario/formulario_usuario_widget.dart';
 
-class UsuarioCadastradoWidget extends StatelessWidget {
-  final Obtenhausuarioscadastrados usuario;
+class UsuarioCadastradoWidget extends StatefulWidget {
+  final UsuarioCadastrado usuario;
   final UsuarioController usuarioController;
 
   const UsuarioCadastradoWidget({
@@ -11,6 +13,62 @@ class UsuarioCadastradoWidget extends StatelessWidget {
     required this.usuario,
     required this.usuarioController,
   });
+
+  @override
+  State<UsuarioCadastradoWidget> createState() =>
+      _UsuarioCadastradoWidgetState();
+}
+
+class _UsuarioCadastradoWidgetState extends State<UsuarioCadastradoWidget> {
+  @override
+  void initState() {
+    super.initState();
+    widget.usuarioController.usuarioState.addListener(onExcluirUsuario);
+  }
+
+  void onExcluirUsuario() {
+    final value = widget.usuarioController.usuarioState.value;
+
+    if (value is ErrorState) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: IntrinsicHeight(
+              child: Column(
+                spacing: 16,
+                children: [
+                  Icon(Icons.error, color: Colors.red, size: 45),
+                  Text(value.erro, style: TextStyle(fontSize: 24)),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } else if (value is LoadingState) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: IntrinsicHeight(
+              child: Column(
+                spacing: 16,
+                children: [CircularProgressIndicator()],
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      Navigator.of(context).pop();
+      if (value is SuccessState) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(value.sucesso), backgroundColor: Colors.green),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +88,12 @@ class UsuarioCadastradoWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Nome: ${usuario.nome}",
+                "Nome: ${widget.usuario.nome}",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              Text("Código: ${usuario.codigo}"),
-              Text("Ativo: ${usuario.ativo}"),
-              Text("Administrador: ${usuario.administrador}"),
+              Text("Código: ${widget.usuario.codigo}"),
+              Text("Ativo: ${widget.usuario.ativo}"),
+              Text("Administrador: ${widget.usuario.administrador}"),
             ],
           ),
           Column(
@@ -61,7 +119,9 @@ class UsuarioCadastradoWidget extends StatelessWidget {
                                     MainAxisAlignment.spaceAround,
                                 children: [
                                   TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
                                     style: ButtonStyle(),
                                     child: Text(
                                       "Cancelar",
@@ -70,7 +130,10 @@ class UsuarioCadastradoWidget extends StatelessWidget {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      usuarioController.excluirUsuario(usuario);
+                                      Navigator.of(context).pop();
+                                      widget.usuarioController.excluirUsuario(
+                                        widget.usuario,
+                                      );
                                     },
                                     child: Text(
                                       "Excluir",
@@ -88,11 +151,31 @@ class UsuarioCadastradoWidget extends StatelessWidget {
                 },
                 icon: Icon(Icons.delete),
               ),
-              IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => FormularioUsuarioWidget(
+                            isEditing: true,
+                            usuario: widget.usuario,
+                          ),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.edit),
+              ),
             ],
           ),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    widget.usuarioController.removeListener(onExcluirUsuario);
+    super.dispose();
   }
 }

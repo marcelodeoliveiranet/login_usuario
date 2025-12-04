@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login_usuario/controllers/usuario_controller.dart';
+import 'package:login_usuario/dependencies/injetor.dart';
 import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
-
-import 'package:login_usuario/services/usuario_service.dart';
 import 'package:login_usuario/views/formulario_usuario/formulario_usuario_widget.dart';
 import 'package:login_usuario/views/usuarios_cadastrados/usuario_cadastrado_widget.dart';
 
@@ -16,14 +15,12 @@ class ObtenhaUsuariosCadastradosWidget extends StatefulWidget {
 
 class _ObtenhaUsuariosCadastradosWidgetState
     extends State<ObtenhaUsuariosCadastradosWidget> {
-  Future<List<Obtenhausuarioscadastrados>> _futureObtenhaUsuariosCadastrados =
-      UsuarioService().obtenhaUsuariosCadastrados();
+  final UsuarioController usuarioController = getIt<UsuarioController>();
 
-  Future<void> refreshObtenhaUsuariosCadastrados() async {
-    setState(() {
-      _futureObtenhaUsuariosCadastrados =
-          UsuarioService().obtenhaUsuariosCadastrados();
-    });
+  @override
+  void initState() {
+    super.initState();
+    usuarioController.obterUsuariosCadastrados();
   }
 
   @override
@@ -37,7 +34,9 @@ class _ObtenhaUsuariosCadastradosWidgetState
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => FormularioUsuarioWidget()),
+            MaterialPageRoute(
+              builder: (context) => FormularioUsuarioWidget(isEditing: false),
+            ),
           );
         },
         backgroundColor: Colors.blue,
@@ -46,38 +45,21 @@ class _ObtenhaUsuariosCadastradosWidgetState
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: RefreshIndicator(
-          onRefresh: refreshObtenhaUsuariosCadastrados,
-          child: FutureBuilder(
-            future: _futureObtenhaUsuariosCadastrados,
+          onRefresh: usuarioController.obterUsuariosCadastrados,
+          child: ListenableBuilder(
+            listenable: usuarioController,
             builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                  return Center(child: CircularProgressIndicator());
-                case ConnectionState.waiting:
-                  return Center(child: CircularProgressIndicator());
-                case ConnectionState.active:
-                  return Center(child: CircularProgressIndicator());
-                case ConnectionState.done:
-                  {
-                    if (snapshot.data == null || snapshot.data!.isEmpty) {
-                      return const Text("Nenhum usuário cadastrado");
-                    } else {
-                      List<Obtenhausuarioscadastrados> usuariosCadastrados =
-                          snapshot.data!;
-                      return ListView.builder(
-                        itemCount: usuariosCadastrados.length,
-                        itemBuilder: (context, index) {
-                          Obtenhausuarioscadastrados usuario =
-                              usuariosCadastrados[index];
-                          return UsuarioCadastradoWidget(
-                            usuario: usuario,
-                            usuarioController: UsuarioController(),
-                          );
-                        },
-                      );
-                    }
-                  }
-              }
+              return ListView.builder(
+                itemCount: usuarioController.usuariosCadastrados.length,
+                itemBuilder: (context, index) {
+                  UsuarioCadastrado usuario =
+                      usuarioController.usuariosCadastrados[index];
+                  return UsuarioCadastradoWidget(
+                    usuario: usuario,
+                    usuarioController: usuarioController,
+                  );
+                },
+              );
             },
           ),
         ),

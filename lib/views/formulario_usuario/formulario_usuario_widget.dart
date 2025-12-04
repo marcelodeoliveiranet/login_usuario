@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:login_usuario/controllers/usuario_controller.dart';
+import 'package:login_usuario/dependencies/injetor.dart';
 import 'package:login_usuario/dto/request/cadastrar_usuario_request.dart';
+import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
 import 'package:login_usuario/model/perfil_acesso.dart';
 import 'package:login_usuario/states/base_state.dart';
 
 class FormularioUsuarioWidget extends StatefulWidget {
-  const FormularioUsuarioWidget({super.key});
+  final bool isEditing;
+  final UsuarioCadastrado? usuario;
+
+  const FormularioUsuarioWidget({
+    super.key,
+    required this.isEditing,
+    this.usuario,
+  });
 
   @override
   State<FormularioUsuarioWidget> createState() =>
@@ -16,7 +25,8 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
   final nomeController = TextEditingController();
   final senhaController = TextEditingController();
   final emailController = TextEditingController();
-  UsuarioController usuarioController = UsuarioController();
+
+  UsuarioController usuarioController = getIt<UsuarioController>();
   bool ativo = false;
   bool administrador = false;
   bool possuiNecessidadeEspeciais = false;
@@ -27,8 +37,13 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
   @override
   void initState() {
     super.initState();
+    if (widget.isEditing) setupEditingUser();
     usuarioController.buscarPerfilAcesso();
     usuarioController.salvarUsuarioState.addListener(onSalvarUsuario);
+  }
+
+  void setupEditingUser() {
+    nomeController.text = widget.usuario!.nome;
   }
 
   void validarFormulario(

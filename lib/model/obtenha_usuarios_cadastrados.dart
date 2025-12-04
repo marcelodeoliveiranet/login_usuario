@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class Obtenhausuarioscadastrados extends Equatable {
+class UsuarioCadastrado extends Equatable {
   final int codigo;
   final bool administrador;
   final bool ativo;
@@ -8,7 +8,7 @@ class Obtenhausuarioscadastrados extends Equatable {
   final String foto;
   final String senha;
 
-  const Obtenhausuarioscadastrados({
+  const UsuarioCadastrado({
     required this.codigo,
     required this.administrador,
     required this.ativo,
@@ -33,8 +33,8 @@ class Obtenhausuarioscadastrados extends Equatable {
     };
   }
 
-  factory Obtenhausuarioscadastrados.fromJson(Map<String, dynamic> map) {
-    return Obtenhausuarioscadastrados(
+  factory UsuarioCadastrado.fromJson(Map<String, dynamic> map) {
+    return UsuarioCadastrado(
       codigo: map['Codigo'] as int,
       administrador: map['Administrador'] as bool,
       ativo: map['Ativo'] as bool,
