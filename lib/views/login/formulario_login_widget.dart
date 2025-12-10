@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:login_usuario/controllers/login_controller.dart';
 import 'package:login_usuario/controllers/usuario_controller.dart';
+import 'package:login_usuario/dependencies/injetor.dart';
+import 'package:login_usuario/dto/request/login_request.dart';
 import 'package:login_usuario/model/usuario.dart';
 import 'package:login_usuario/views/usuarios_cadastrados/obtenha_usuarios_cadastrados_widget.dart';
 
@@ -13,6 +16,7 @@ class FormularioLoginWidget extends StatefulWidget {
 class _FormularioLoginWidgetState extends State<FormularioLoginWidget> {
   final senhaController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  LoginController loginController = getIt<LoginController>();
   Usuario? usuarioSelecionado;
   UsuarioController usuarioController = UsuarioController();
 
@@ -20,6 +24,18 @@ class _FormularioLoginWidgetState extends State<FormularioLoginWidget> {
   void initState() {
     super.initState();
     usuarioController.obtenhaUsuariosAtivos();
+    loginController.verficarUsuarioLogado();
+    loginController.addListener(() {
+      if (loginController.usuarioLogado != null) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ObtenhaUsuariosCadastradosWidget(),
+          ),
+          (route) => false,
+        );
+      }
+    });
   }
 
   @override
@@ -90,19 +106,15 @@ class _FormularioLoginWidgetState extends State<FormularioLoginWidget> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             final validation = formKey.currentState?.validate();
 
                             if (validation == true) {
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) =>
-                                          ObtenhaUsuariosCadastradosWidget(),
-                                ),
-                                (route) => false,
+                              LoginRequest loginRequest = LoginRequest(
+                                codigoUsuario: usuarioSelecionado!.codigo,
+                                senha: senhaController.text,
                               );
+                              await loginController.logarUsuario(loginRequest);
                             }
                           },
                           style: ElevatedButton.styleFrom(

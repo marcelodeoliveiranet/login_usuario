@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:login_usuario/controllers/usuario_controller.dart';
 import 'package:login_usuario/dependencies/injetor.dart';
 import 'package:login_usuario/dto/request/cadastrar_usuario_request.dart';
-import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
 import 'package:login_usuario/model/perfil_acesso.dart';
+import 'package:login_usuario/model/usuario_cadastrado.dart';
 import 'package:login_usuario/states/base_state.dart';
 
 class FormularioUsuarioWidget extends StatefulWidget {
@@ -27,6 +27,7 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
   final emailController = TextEditingController();
 
   UsuarioController usuarioController = getIt<UsuarioController>();
+  int codigo = 0;
   bool ativo = false;
   bool administrador = false;
   bool possuiNecessidadeEspeciais = false;
@@ -43,7 +44,18 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
   }
 
   void setupEditingUser() {
+    codigo = widget.usuario!.codigo;
     nomeController.text = widget.usuario!.nome;
+    senhaController.text = widget.usuario!.senha;
+    ativo = widget.usuario!.ativo == 'S' ? true : false;
+    administrador = widget.usuario!.administrador == 'S' ? true : false;
+    possuiNecessidadeEspeciais =
+        widget.usuario!.possuinecessidadesespecial == 'S' ? true : false;
+    emailController.text = widget.usuario!.email;
+    perfilSelecionado =
+        usuarioController.perfisAcesso
+            .where((element) => element.codigo == widget.usuario!.codigoPerfil)
+            .firstOrNull;
   }
 
   void validarFormulario(
@@ -56,7 +68,7 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
     String email,
   ) async {
     CadastrarUsuarioRequest usuarioDto = CadastrarUsuarioRequest(
-      codigo: 0,
+      codigo: codigo,
       foto: "",
       nome: nome,
       senha: senha,
@@ -68,6 +80,10 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
     );
 
     usuarioController.salvarUsuario(usuarioDto);
+
+    if (widget.isEditing) {
+      Navigator.pop(context);
+    }
   }
 
   void onSalvarUsuario() {
@@ -130,7 +146,7 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Inclusão de Usuario"),
+        title: const Text("Cadastro de Usuario"),
         backgroundColor: Colors.blue,
       ),
       body: Padding(
@@ -296,7 +312,7 @@ class _FormularioUsuarioWidgetState extends State<FormularioUsuarioWidget> {
     nomeController.dispose();
     senhaController.dispose();
     emailController.dispose();
-    usuarioController.removeListener(onSalvarUsuario);
+    usuarioController.salvarUsuarioState.removeListener(onSalvarUsuario);
     super.dispose();
   }
 }

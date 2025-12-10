@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:login_usuario/dto/request/cadastrar_usuario_request.dart';
-import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
 import 'package:login_usuario/model/perfil_acesso.dart';
 import 'package:login_usuario/model/usuario.dart';
+import 'package:login_usuario/model/usuario_cadastrado.dart';
 import 'package:login_usuario/services/perfil_acesso_service.dart';
 import 'package:login_usuario/services/usuario_service.dart';
 import 'package:login_usuario/states/base_state.dart';
@@ -15,6 +15,7 @@ class UsuarioController extends ChangeNotifier {
   UsuarioService usuarioService = UsuarioService();
   ValueNotifier<BaseState> perfilAcessoState = ValueNotifier(IdleState());
   ValueNotifier<BaseState> salvarUsuarioState = ValueNotifier(IdleState());
+  ValueNotifier<BaseState> excluirUsuarioState = ValueNotifier(IdleState());
   ValueNotifier<BaseState> usuarioState = ValueNotifier(IdleState());
 
   Future<void> obterUsuariosCadastrados() async {
@@ -27,17 +28,17 @@ class UsuarioController extends ChangeNotifier {
   }
 
   Future<void> excluirUsuario(UsuarioCadastrado usuarioCadastrado) async {
-    usuarioState.value = LoadingState();
+    excluirUsuarioState.value = LoadingState();
 
     try {
       await usuarioService.excluirUsuario(usuarioCadastrado);
 
-      usuarioState.value = SuccessState(
+      excluirUsuarioState.value = SuccessState(
         sucesso: "Usuário excluido com sucesso",
       );
       usuariosCadastrados.remove(usuarioCadastrado);
     } catch (e) {
-      usuarioState.value = ErrorState(erro: e.toString());
+      excluirUsuarioState.value = ErrorState(erro: e.toString());
     } finally {
       notifyListeners();
     }

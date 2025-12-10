@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:login_usuario/controllers/usuario_controller.dart';
 import 'package:login_usuario/dependencies/injetor.dart';
-import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
+import 'package:login_usuario/model/usuario_cadastrado.dart';
+import 'package:login_usuario/states/base_state.dart';
 import 'package:login_usuario/views/formulario_usuario/formulario_usuario_widget.dart';
+import 'package:login_usuario/views/profile/profile_widget.dart';
 import 'package:login_usuario/views/usuarios_cadastrados/usuario_cadastrado_widget.dart';
 
 class ObtenhaUsuariosCadastradosWidget extends StatefulWidget {
@@ -21,6 +23,51 @@ class _ObtenhaUsuariosCadastradosWidgetState
   void initState() {
     super.initState();
     usuarioController.obterUsuariosCadastrados();
+    usuarioController.excluirUsuarioState.addListener(onExcluirUsuario);
+  }
+
+  void onExcluirUsuario() {
+    final value = usuarioController.excluirUsuarioState.value;
+
+    if (value is ErrorState) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: IntrinsicHeight(
+              child: Column(
+                spacing: 16,
+                children: [
+                  Icon(Icons.error, color: Colors.red, size: 45),
+                  Text(value.erro, style: TextStyle(fontSize: 24)),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } else if (value is LoadingState) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: IntrinsicHeight(
+              child: Column(
+                spacing: 16,
+                children: [CircularProgressIndicator()],
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      Navigator.of(context).pop();
+      if (value is SuccessState) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(value.sucesso), backgroundColor: Colors.green),
+        );
+      }
+    }
   }
 
   @override
@@ -29,6 +76,19 @@ class _ObtenhaUsuariosCadastradosWidgetState
       appBar: AppBar(
         title: const Text("Usuários Cadastrados"),
         backgroundColor: Colors.blue,
+        actions: [
+          CircleAvatar(
+            child: IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileWidget()),
+                );
+              },
+              icon: Icon(Icons.person),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -65,5 +125,11 @@ class _ObtenhaUsuariosCadastradosWidgetState
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    usuarioController.usuarioState.removeListener(onExcluirUsuario);
+    super.dispose();
   }
 }

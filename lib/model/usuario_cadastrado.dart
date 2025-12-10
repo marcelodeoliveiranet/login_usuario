@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class Usuario extends Equatable {
+class UsuarioCadastrado extends Equatable {
   final String foto;
   final int codigo;
   final String nome;
@@ -8,9 +8,10 @@ class Usuario extends Equatable {
   final String ativo;
   final String senha;
   final String email;
-  final int codigoPerfilAcesso;
+  final int codigoPerfil;
+  final String possuinecessidadesespecial;
 
-  const Usuario({
+  const UsuarioCadastrado({
     required this.foto,
     required this.codigo,
     required this.nome,
@@ -18,7 +19,8 @@ class Usuario extends Equatable {
     required this.ativo,
     required this.senha,
     required this.email,
-    required this.codigoPerfilAcesso,
+    required this.codigoPerfil,
+    required this.possuinecessidadesespecial,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,12 +32,13 @@ class Usuario extends Equatable {
       'ativo': ativo,
       'senha': senha,
       'email': email,
-      'codigoPerfilAcesso': codigoPerfilAcesso,
+      'codigoPerfil': codigoPerfil,
+      'possuinecessidadesespecial': possuinecessidadesespecial,
     };
   }
 
-  factory Usuario.fromJson(Map<String, dynamic> map) {
-    return Usuario(
+  factory UsuarioCadastrado.fromJson(Map<String, dynamic> map) {
+    return UsuarioCadastrado(
       foto: map['Foto'] as String,
       codigo: map['Codigo'] as int,
       nome: map['Nome'] as String,
@@ -43,20 +46,8 @@ class Usuario extends Equatable {
       ativo: map['Ativo'] as String,
       senha: map['Senha'] as String,
       email: map['Email'] as String,
-      codigoPerfilAcesso: map['CodigoPerfilAcesso'] as int,
-    );
-  }
-
-  factory Usuario.fromMap(Map<String, dynamic> map) {
-    return Usuario(
-      foto: map['Foto'] as String,
-      codigo: map['Codigo'] as int,
-      nome: map['Nome'] as String,
-      administrador: map['Administrador'] as String,
-      ativo: map['Ativo'] as String,
-      senha: map['Senha'] as String,
-      email: map['Email'] as String,
-      codigoPerfilAcesso: map['CodigoPerfilAcesso'] as int,
+      codigoPerfil: map['CodigoPerfilAcesso'] as int,
+      possuinecessidadesespecial: map['PossuiNecessidadesEspecial'] as String,
     );
   }
 
@@ -70,7 +61,8 @@ class Usuario extends Equatable {
       ativo,
       senha,
       email,
-      codigoPerfilAcesso,
+      codigoPerfil,
+      possuinecessidadesespecial,
     ];
   }
 }

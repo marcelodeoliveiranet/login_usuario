@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login_usuario/controllers/usuario_controller.dart';
-import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
-import 'package:login_usuario/states/base_state.dart';
+import 'package:login_usuario/model/usuario_cadastrado.dart';
 import 'package:login_usuario/views/formulario_usuario/formulario_usuario_widget.dart';
 
 class UsuarioCadastradoWidget extends StatefulWidget {
@@ -20,56 +19,6 @@ class UsuarioCadastradoWidget extends StatefulWidget {
 }
 
 class _UsuarioCadastradoWidgetState extends State<UsuarioCadastradoWidget> {
-  @override
-  void initState() {
-    super.initState();
-    widget.usuarioController.usuarioState.addListener(onExcluirUsuario);
-  }
-
-  void onExcluirUsuario() {
-    final value = widget.usuarioController.usuarioState.value;
-
-    if (value is ErrorState) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: IntrinsicHeight(
-              child: Column(
-                spacing: 16,
-                children: [
-                  Icon(Icons.error, color: Colors.red, size: 45),
-                  Text(value.erro, style: TextStyle(fontSize: 24)),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    } else if (value is LoadingState) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: IntrinsicHeight(
-              child: Column(
-                spacing: 16,
-                children: [CircularProgressIndicator()],
-              ),
-            ),
-          );
-        },
-      );
-    } else {
-      Navigator.of(context).pop();
-      if (value is SuccessState) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(value.sucesso), backgroundColor: Colors.green),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -171,11 +120,5 @@ class _UsuarioCadastradoWidgetState extends State<UsuarioCadastradoWidget> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    widget.usuarioController.removeListener(onExcluirUsuario);
-    super.dispose();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login_usuario/controllers/login_controller.dart';
 import 'package:login_usuario/dependencies/injetor.dart';
 import 'package:login_usuario/views/login/formulario_login_widget.dart';
 
@@ -15,6 +16,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  LoginController loginController = getIt<LoginController>();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

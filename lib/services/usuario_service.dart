@@ -1,7 +1,7 @@
 import 'package:login_usuario/dto/request/cadastrar_usuario_request.dart';
-import 'package:login_usuario/model/obtenha_usuarios_cadastrados.dart';
 import 'package:login_usuario/model/usuario.dart';
 import 'package:dio/dio.dart';
+import 'package:login_usuario/model/usuario_cadastrado.dart';
 
 class UsuarioService {
   final Dio _dio = Dio(
