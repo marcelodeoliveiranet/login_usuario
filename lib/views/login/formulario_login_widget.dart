@@ -20,22 +20,24 @@ class _FormularioLoginWidgetState extends State<FormularioLoginWidget> {
   Usuario? usuarioSelecionado;
   UsuarioController usuarioController = UsuarioController();
 
+  void verificarUsuarioLogado() {
+    if (loginController.usuarioLogado != null) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ObtenhaUsuariosCadastradosWidget(),
+        ),
+        (route) => false,
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     usuarioController.obtenhaUsuariosAtivos();
     loginController.verficarUsuarioLogado();
-    loginController.addListener(() {
-      if (loginController.usuarioLogado != null) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ObtenhaUsuariosCadastradosWidget(),
-          ),
-          (route) => false,
-        );
-      }
-    });
+    loginController.addListener(verificarUsuarioLogado);
   }
 
   @override
@@ -134,5 +136,11 @@ class _FormularioLoginWidgetState extends State<FormularioLoginWidget> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    loginController.removeListener(verificarUsuarioLogado);
+    super.dispose();
   }
 }

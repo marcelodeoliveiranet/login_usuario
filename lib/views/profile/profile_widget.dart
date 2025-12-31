@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login_usuario/controllers/login_controller.dart';
 import 'package:login_usuario/dependencies/injetor.dart';
+import 'package:login_usuario/views/login/formulario_login_widget.dart';
 
 class ProfileWidget extends StatefulWidget {
   const ProfileWidget({super.key});
@@ -33,6 +34,12 @@ class _ProfileWidgetState extends State<ProfileWidget> {
             GestureDetector(
               onTap: () async {
                 await loginController.logOut();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => FormularioLoginWidget(),
+                  ),
+                  (route) => false,
+                );
               },
               child: Container(
                 width: double.infinity,
