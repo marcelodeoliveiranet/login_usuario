@@ -4,7 +4,7 @@ import 'package:login_usuario/controllers/usuario_controller.dart';
 import 'package:login_usuario/dependencies/injetor.dart';
 import 'package:login_usuario/dto/request/login_request.dart';
 import 'package:login_usuario/model/usuario.dart';
-import 'package:login_usuario/views/usuarios_cadastrados/obtenha_usuarios_cadastrados_widget.dart';
+import 'package:login_usuario/views/menu/menu_widget.dart';
 
 class FormularioLoginWidget extends StatefulWidget {
   const FormularioLoginWidget({super.key});
@@ -24,9 +24,7 @@ class _FormularioLoginWidgetState extends State<FormularioLoginWidget> {
     if (loginController.usuarioLogado != null) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-          builder: (context) => ObtenhaUsuariosCadastradosWidget(),
-        ),
+        MaterialPageRoute(builder: (context) => MenuWidget()),
         (route) => false,
       );
     }

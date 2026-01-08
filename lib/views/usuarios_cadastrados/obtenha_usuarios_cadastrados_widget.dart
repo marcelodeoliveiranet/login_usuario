@@ -4,7 +4,6 @@ import 'package:login_usuario/dependencies/injetor.dart';
 import 'package:login_usuario/model/usuario_cadastrado.dart';
 import 'package:login_usuario/states/base_state.dart';
 import 'package:login_usuario/views/formulario_usuario/formulario_usuario_widget.dart';
-import 'package:login_usuario/views/profile/profile_widget.dart';
 import 'package:login_usuario/views/usuarios_cadastrados/usuario_cadastrado_widget.dart';
 
 class ObtenhaUsuariosCadastradosWidget extends StatefulWidget {
@@ -76,19 +75,6 @@ class _ObtenhaUsuariosCadastradosWidgetState
       appBar: AppBar(
         title: const Text("Usuários Cadastrados"),
         backgroundColor: Colors.blue,
-        actions: [
-          CircleAvatar(
-            child: IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfileWidget()),
-                );
-              },
-              icon: Icon(Icons.person),
-            ),
-          ),
-        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
